@@ -9,12 +9,12 @@ const db = knex(knexfile.development);
 //GET /api/cars
 router.get('/', (req, res) => {
     db('cars')
-    .then(cars => {
-      res.status(200).json(cars);
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Problem retrieving cars" });
-    });
+        .then(cars => {
+            res.status(200).json(cars);
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Problem retrieving cars" });
+        });
 });
 
 //GET /api/cars/id
@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => {
     db('cars').where(id)
         .then(car => {
             if (car) {
-            res.status(200).json(car);
+                res.status(200).json(car);
             } else {
                 res.status(404).json({ message: "car not found" });
             }
@@ -47,6 +47,43 @@ router.post('/', (req, res) => {
                 res.status(500).json({ message: "problem creating car" });
             });
     }
+});
+
+//STRETCH DELETE & UPDATE
+
+//DELETE /api/cars/id
+router.delete("/:id", (req, res) => {
+    const id = req.params;
+    db('cars').where(id)
+        .del()
+        .then(car => {
+            if (car > 0) {
+                res.status(200).json({ message: "car deleted successfully " });
+            } else {
+                res.status(404).json({ message: "car not found" });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "problem deleting car" });
+        });
+});
+
+//PUT /api/cars/id
+router.put('/:id', (req, res) => {
+    const changes = req.body;
+    const id = req.params;
+    db('cars').where(id)
+        .update(changes)
+        .then(car => {
+            if (car > 0) {
+                res.status(200).json({ message: "car updated successfully " });
+            } else {
+                res.status(404).json({ message: "car not found" });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ message: "problem updating car" });
+        });
 });
 
 module.exports = router;
